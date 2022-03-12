@@ -1,0 +1,52 @@
+: 详见：[[Wikipedia:zh:Help:替换引用|Wikipedia:zh:Help:替换引用]]<!-- 
+
+ --><br><br><!-- 
+
+ -->'''替换引用（Substitution）'''是一种MediaWiki语法，而此文章[[User:呼儿|呼儿]]将会采用问答的形式介绍其用途及使用方法。
+
+== 基础 ==
+=== 替换引用是什么？ ===
+{{Quote|它能在引用页面保存时，将维基代码自动替换，分别为模板的维基代码、变量的值与解析函数的值。|[[Wikipedia:Help:替换引用|Wikipedia]]}}
+替换引用，即通过替换的方式引用模板。它可以把模板直接复制一份到页面中。平时正常引用的模板会随着原模板被变更而使引用模板的页面内容发生变化，而替换引用由于直接“复制”了一份模板，所以不会因此改变。
+举个例子，我们会在讨论页发布话题时依规定加入签名。签名有很多种，如<code><nowiki>~~~</nowiki></code>只会输出用户名，<code><nowiki>~~~~</nowiki></code>会输出用户名与日期，<code><nowiki>~~~~~</nowiki></code>则只输出日期。先不管它的不同类型，我们需要理解它为什么会准确替换成用户名或日期才是重点。
+实际上，签名也可以理解成一种模板，用于方便用户在讨论页签名。比如，如果我想在讨论页签名，肯定是用<code><nowiki>~~~~</nowiki></code>比较方便，而不是用<code><nowiki>{{Userlink array|呼儿}} {{Subst:CURRENTYEAR}}年{{Subst:CURRENTMONTHNAME}}{{Subst:CURRENTDAY}}日 ({{Subst:#time:D}}) {{Subst:CURRENTTIME}} (UTC)</nowiki></code>。在理解以上句段时，我们发现，<code><nowiki>~~~~</nowiki></code>其实就算是一个模板。实际上，<code><nowiki>~~~</nowiki></code>、<code><nowiki>~~~~</nowiki></code>和<code><nowiki>~~~~~</nowiki></code>就是为了方便讨论页签名而设计的“特别模板”。
+
+=== 它能在什么地方使用？ ===
+通常替换引用会出现在讨论页中，如上方介绍的签名、<code><nowiki>{{</nowiki>[[Template:Unsigned|Unsigned]]<nowiki>}}</nowiki></code>、<code><nowiki>{{</nowiki>[[Template:Edited|Edited]]<nowiki>}}</nowiki></code>、<code><nowiki>{{</nowiki>[[Template:Undated|Undated]]<nowiki>}}</nowiki></code>等。之所以要对这些模板进行替换引用，是因为模板中包含日期或签名（如<code><nowiki>~~~</nowiki></code>、<code><nowiki>~~~~</nowiki></code>或<code><nowiki>~~~~~</nowiki></code>），若不替换引用，时间就不会被替换成编辑发布时的正确时间，签名也不会被替换成编辑者的签名。模板中若包含签名，其本身也要替换引用。
+
+=== 我该怎么使用？ ===
+只要在模板名称前加上<code><nowiki>Subst:</nowiki></code>就可以了。举个例子，如果正常使用时是<code><nowiki>{{Edited}}</nowiki></code>，那在替换引用时则是<code><nowiki>{{Subst:Edited}}</nowiki></code>。对模板的替换引用不会显示在页面历史与模板的链入页面中，但可能出现在创建新页面时的编辑摘要里。<ref>因为创建页面时若未填写摘要，则使用页面的内容填充，比如{{Fullurl|User talk:LancyChat|action=history|text=此页面}}。</ref><br>
+被替换的模板中若有其它模板，此模板则不会被替换引用，可在替换完原模板之后再替换引用一次以达成效果。
+
+=== 如何修改替换引用后的代码？ ===
+关于此问题，可以先保存更改，因为替换引用是在保存后进行的。但是可以点击“显示预览”先查看以下替换引用的效果（使用外部编辑器可能无法预览其效果）<ref>因为一些编辑器没有设定<code><nowiki>pst=true</nowiki></code>，比如[https://github.com/Dragon-Fish/InPageEdit-v2/issues/67 旧版的InPageEdit]。</ref>。
+
+== 高级 ==
+=== 为什么它不会把全部代码复制过来？ ===
+因为替换引用本身不是为了复制模板而生，故有一些含如<code><nowiki><includeonly></nowiki></code>、<code><nowiki><onlyinclude></nowiki></code>或<code><nowiki><noinclude></nowiki></code>的内容可能会缺失一些内容（虽然这些内容不一定有用）不过<code><nowiki>Subst:msgnw:</nowiki></code>（或<code><nowiki>Safesubst:msgnw:</nowiki></code>）是一种替换引用的变种，能将模板复制到目标页面而不会有任何改变。一般替换引用会在替换时自动去除如<code><nowiki><nowiki></nowiki></code>、<code><nowiki><noinclude></nowiki></code>、<code><nowiki><includeonly></nowiki></code>和<code><nowiki><onlyinclude></nowiki></code>之类的内容，但使用<code><nowiki>Subst:msgnw</nowiki></code>就会原封不动地保留。
+
+=== 如果它失败了怎么办？ ===
+失败时，<code><nowiki>Subst:</nowiki></code>会保持未被替换引用的状态（如<code><nowiki>{{Subst:模板名称}}</nowiki></code>），导致无法正常使用。故我们可以将<code><nowiki>Subst:</nowiki></code>改为<code><nowiki>Safesubst:</nowiki></code>，这样就算出现错误，也只会取消替换引用，变为普通的引用效果，来确保相关功能正常使用。此功能通常用于编写模板时，测试模板是否可用。<br>
+对签名（<code><nowiki>~~~~</nowiki></code>）进行替换引用不会有效果。<br>
+模板内<code><nowiki><nowiki></nowiki></code>与<code><nowiki><pre></nowiki></code>中的内容依然会替换引用。
+
+=== 如何让它通过条件决定是否替换？ ===
+是否进行替换引用可由特定参数决定，还可以通过此方法进行多重替换，示例如下。
+* 页面A包含<code><nowiki>{{Subst:B|subst=Subst:|参数}}</nowiki></code>
+* Template:B包含<code><nowiki>{{{{{Subst|}}}C|Subst={{{Subst|}}}|参数}}</nowiki></code>
+* Template:C包含<code><nowiki>{{{{{Subst|}}}D|Subst={{{Subst|}}}|参数}}</nowiki></code>
+（以此类推）<br>
+当页面A对Template:B的引用包含<code><nowiki>Subst=Subst:</nowiki></code>时，Template:B对Template:C的引用也是替换引用，以此类推。若页面A不含<code><nowiki>Subst=Subst:</nowiki></code>时，便不会替换引用，且不会出现错误。我们可以利用此方法来实现条件替换和多重替换。
+
+=== 可以把替换引用与魔术字或解析器函数结合使用吗？ ===
+两种都可以。见上，如魔术字<code><nowiki>{{CURRENTYEAR}}</nowiki></code>可以通过替换引用<code><nowiki>{{Subst:CURRENTYEAR}}</nowiki></code>来防止想要输出的内容随时间改变。<br>
+解析器函数的<code><nowiki>Subst:</nowiki></code>与<code><nowiki>#</nowiki></code>之间不能有间隔。如<code><nowiki>{{Subst:#time:c}}</nowiki></code>会输出<code>{{#time:c}}</code>，而<code><nowiki>{{Subst: #time:c}}</nowiki></code>则输出为<code>{{Subst: #time:c}}</code>。
+
+=== 如何利用<code><nowiki><includeonly></nowiki></code>实现基于引用的替换？ ===
+在被替换的模板中使用<code><nowiki><includeonly></nowiki></code>标签，可以基于引用的替换。
+
+代码<code><nowiki>~<includeonly>~</includeonly>~~</nowiki></code>显示为<nowiki>~~~</nowiki>，当被引用时显示为<nowiki>~~~~</nowiki>，当被替换引用时展开为用户签名。而当一包含了<code><nowiki>{{<includeonly>Subst:</includeonly>CURRENTTIME}}</nowiki></code>的模板被替换引用并保存时，不变的时间就被保存在Wikitext中，替换了随时间变化的时间变量。变量也是如此。<br>
+简而言之，仅包含标签可被用于专门被替换引用的模板、变量，即在<code>Subst:</code>前后加上仅包含标签。
+
+== 备注 ==
+<references group="注"></references>
